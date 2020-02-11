@@ -4,52 +4,58 @@
 
 For more details on how this application has been created, please check  link:http://www.masterspringboot.com/cloud/docker/running-a-spring-boot-application-with-docker[How to deploy Spring Boot applications on Docker ]
 
-Now start your Openshift and login:
+* Start Openshift Cluster and login:
 
 	$ oc login 
 
-We will create a project named myproject:
+* Create a project named myproject:
 
 	$ oc new-project myproject
 
 
-Now in order to build our project we will use the redhat-openjdk-18 builder image which takes your application source or binary artifacts, builds the source using Maven, and assembles the artifacts with any required dependencies to create a new, ready-to-run image containing your Java application. This resulting image can be run on OpenShift Online or run directly with Docker.
+* Now in order to build our project we will use the redhat-openjdk-18 builder image which takes your application source or binary artifacts, builds the source using Maven, and assembles the artifacts with any required dependencies to create a new, ready-to-run image containing your Java application. This resulting image can be run on OpenShift Online or run directly with Docker.
 
 Therefore, create a new application named "springboot-demo-docker", which uses this image, available at the github repository we have mentioned at the beginning of this tutorial:
 
 
 	$ oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/skoussou/spring-boot-apps.git --context-dir=demo-docker --name=springboot-demo-docker
 
----
---> Found container image 91099d6 (2 weeks old) from registry.access.redhat.com for "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift"
 
-    Java Applications 
-    ----------------- 
-    Platform for building and running plain Java applications (fat-jar and flat classpath)
+	--> Found container image 91099d6 (2 weeks old) from registry.access.redhat.com for "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift"
+	
+	    Java Applications 
+	    ----------------- 
+	    Platform for building and running plain Java applications (fat-jar and flat classpath)
+	
+	    Tags: builder, java
+	
+	    * An image stream tag will be created as "openjdk18-openshift:latest" that will track the source image
+	    * A source build using source code from https://github.com/skoussou/spring-boot-apps.git will be created
+	      * The resulting image will be pushed to image stream tag "springboot-demo-docker:latest"
+	      * Every time "openjdk18-openshift:latest" changes a new build will be triggered
+	    * This image will be deployed in deployment config "springboot-demo-docker"
+	    * Ports 8080/tcp, 8443/tcp, 8778/tcp will be load balanced by service "springboot-demo-docker"
+	      * Other containers can access this service through the hostname "springboot-demo-docker"
+	
+	--> Creating resources ...
+	    imagestream.image.openshift.io "openjdk18-openshift" created
+	    imagestream.image.openshift.io "springboot-demo-docker" created
+	    buildconfig.build.openshift.io "springboot-demo-docker" created
+	    deploymentconfig.apps.openshift.io "springboot-demo-docker" created
+	    service "springboot-demo-docker" created
+	--> Success
+	    Build scheduled, use 'oc logs -f bc/springboot-demo-docker' to track its progress.
+	    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
+	     'oc expose svc/springboot-demo-docker' 
+	    Run 'oc status' to view your app.
 
-    Tags: builder, java
 
-    * An image stream tag will be created as "openjdk18-openshift:latest" that will track the source image
-    * A source build using source code from https://github.com/skoussou/spring-boot-apps.git will be created
-      * The resulting image will be pushed to image stream tag "springboot-demo-docker:latest"
-      * Every time "openjdk18-openshift:latest" changes a new build will be triggered
-    * This image will be deployed in deployment config "springboot-demo-docker"
-    * Ports 8080/tcp, 8443/tcp, 8778/tcp will be load balanced by service "springboot-demo-docker"
-      * Other containers can access this service through the hostname "springboot-demo-docker"
-
---> Creating resources ...
-    imagestream.image.openshift.io "openjdk18-openshift" created
-    imagestream.image.openshift.io "springboot-demo-docker" created
-    buildconfig.build.openshift.io "springboot-demo-docker" created
-    deploymentconfig.apps.openshift.io "springboot-demo-docker" created
-    service "springboot-demo-docker" created
---> Success
-    Build scheduled, use 'oc logs -f bc/springboot-demo-docker' to track its progress.
-    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
-     'oc expose svc/springboot-demo-docker' 
-    Run 'oc status' to view your app.
----
-
+* Expose SpringBoot service Route and externally access it
 	$ oc expose svc/springboot-demo-docker
 	$ curl -X GET http://$(oc get route springboot-demo-docker --template '{{ .spec.host }}')
 		[{"id":1,"name":"frank"},{"id":2,"name":"john"}]
+
+
+
+
+
