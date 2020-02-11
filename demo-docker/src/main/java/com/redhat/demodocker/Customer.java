@@ -1,4 +1,4 @@
-package com.example.demodocker;
+package com.redhat.demodocker;
 
 
 

@@ -1,4 +1,4 @@
-package com.example.demodocker;
+package com.redhat.demodocker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
