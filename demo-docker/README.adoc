@@ -19,3 +19,37 @@ Therefore, create a new application named "springboot-demo-docker", which uses t
 
 
 	$ oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/skoussou/spring-boot-apps.git --context-dir=demo-docker --name=springboot-demo-docker
+
+---
+--> Found container image 91099d6 (2 weeks old) from registry.access.redhat.com for "registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift"
+
+    Java Applications 
+    ----------------- 
+    Platform for building and running plain Java applications (fat-jar and flat classpath)
+
+    Tags: builder, java
+
+    * An image stream tag will be created as "openjdk18-openshift:latest" that will track the source image
+    * A source build using source code from https://github.com/skoussou/spring-boot-apps.git will be created
+      * The resulting image will be pushed to image stream tag "springboot-demo-docker:latest"
+      * Every time "openjdk18-openshift:latest" changes a new build will be triggered
+    * This image will be deployed in deployment config "springboot-demo-docker"
+    * Ports 8080/tcp, 8443/tcp, 8778/tcp will be load balanced by service "springboot-demo-docker"
+      * Other containers can access this service through the hostname "springboot-demo-docker"
+
+--> Creating resources ...
+    imagestream.image.openshift.io "openjdk18-openshift" created
+    imagestream.image.openshift.io "springboot-demo-docker" created
+    buildconfig.build.openshift.io "springboot-demo-docker" created
+    deploymentconfig.apps.openshift.io "springboot-demo-docker" created
+    service "springboot-demo-docker" created
+--> Success
+    Build scheduled, use 'oc logs -f bc/springboot-demo-docker' to track its progress.
+    Application is not exposed. You can expose services to the outside world by executing one or more of the commands below:
+     'oc expose svc/springboot-demo-docker' 
+    Run 'oc status' to view your app.
+---
+
+	$ oc expose svc/springboot-demo-docker
+	$ curl -X GET http://$(oc get route springboot-demo-docker --template '{{ .spec.host }}')
+		[{"id":1,"name":"frank"},{"id":2,"name":"john"}]
