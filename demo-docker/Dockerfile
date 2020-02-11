@@ -1,8 +1,6 @@
 # Start with a base image containing Java runtime
-FROM openjdk:8-jdk-alpine
-
-# Add Maintainer Info
-LABEL maintainer="marchioni.francesco@gmail.com"
+#FROM openjdk:8-jdk-alpine
+FROM image-registry.openshift-image-registry.svc:5000/openshift/redhat-openjdk18-openshift
 
 # Add a volume pointing to /tmp
 VOLUME /tmp

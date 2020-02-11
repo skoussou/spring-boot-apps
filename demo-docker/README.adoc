@@ -1,3 +1,21 @@
 == Spring Boot with Docker
 
 * Source code for tutorial: http://www.masterspringboot.com/cloud/docker/running-a-spring-boot-application-with-docker
+
+For more details on how this application has been created, please check  link:http://www.masterspringboot.com/cloud/docker/running-a-spring-boot-application-with-docker[How to deploy Spring Boot applications on Docker ]
+
+Now start your Openshift and login:
+
+	$ oc login 
+
+We will create a project named myproject:
+
+	$ oc new-project myproject
+
+
+Now in order to build our project we will use the redhat-openjdk-18 builder image which takes your application source or binary artifacts, builds the source using Maven, and assembles the artifacts with any required dependencies to create a new, ready-to-run image containing your Java application. This resulting image can be run on OpenShift Online or run directly with Docker.
+
+Therefore, create a new application named "springboot-demo-docker", which uses this image, available at the github repository we have mentioned at the beginning of this tutorial:
+
+	
+$ oc new-app registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift~https://github.com/skoussou/spring-boot-apps.git --context-dir=demo-docker --name=springboot-demo-docker
