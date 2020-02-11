@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.1.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>it.sia</groupId>
+	<artifactId>jdg-health-monitor</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>demo</name>
+	<description>Springg Boot App to Monitor JDG App Server and Expose REST APIs for Health</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+		<version.jboss.bom.eap>7.1.6.GA</version.jboss.bom.eap>		
+
+		<swagger.version>2.9.2</swagger.version>
+		<swagger-annotations.version>1.5.21</swagger-annotations.version>
+		<swagger-models.version>1.5.21</swagger-models.version>		
+	</properties>
+
+	<dependencyManagement>
+        <dependencies>
+            <!-- Define the version of JBoss' Java EE 7 APIs we want to import. 
+                Any dependencies from org.jboss.spec will have their version defined by this 
+                BOM -->
+            <!-- JBoss distributes a complete set of Java EE 7 APIs including a Bill 
+                of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection) 
+                of artifacts. We use this here so that we always get the correct versions 
+                of artifacts. Here we use the jboss-javaee-6.0 stack (you can read this as 
+                the JBoss stack of the Java EE 6 APIs). You can actually use this stack with 
+                any version of JBoss EAP that implements Java EE 6. -->
+            <!--dependency>
+                <groupId>org.jboss.bom</groupId>
+                <artifactId>jboss-eap-javaee7-with-tools</artifactId>
+                <version>${version.jboss.bom.eap}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency-->
+			<dependency>
+				<groupId>org.jboss.bom</groupId>
+				<artifactId>jboss-eap-javaee8-with-tools</artifactId>
+				<version>7.2.0.GA</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>	
+			<!--dependency>
+				<groupId>org.jboss.bom</groupId>
+				<artifactId>eap-runtime-artifacts</artifactId>
+				<version>7.2.0.GA</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency-->					
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<!--dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-rest</artifactId>
+		</dependency-->
+	
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+
+		<!-- JAX-RS Dependencies -->
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-spring-boot-starter-jaxrs</artifactId>
+            <version>3.3.1</version>
+        </dependency>		
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-jaxrs</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-xc</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+
+		<!-- DMR/CLI Connection Dependencies -->
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-dmr</artifactId>
+            <version>1.5.0.Final-redhat-1</version>
+		    <scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.wildfly.core</groupId>
+			<artifactId>wildfly-cli</artifactId>
+			<version>6.0.11.Final-redhat-00001</version>
+		    <scope>compile</scope>		   
+		</dependency>
+		<dependency>
+          <groupId>org.jboss.remotingjmx</groupId>
+          <artifactId>remoting-jmx</artifactId>
+		   <version>3.0.0.Final-redhat-1</version>
+		    <scope>compile</scope>		   
+       </dependency>				   
+        <dependency>
+            <groupId>org.jboss.remoting</groupId>
+            <artifactId>jboss-remoting</artifactId>
+            <version>5.0.8.Final-redhat-1</version>
+		    <scope>compile</scope>			
+        </dependency>	   
+ 
+		<!-- JSON -->
+		<dependency>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20190722</version>
+		    <scope>compile</scope>			
+		</dependency>
+
+		<!-- Swagger -->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-ui</artifactId>
+			<version>1.2.15</version>
+		</dependency>			
+
+		<!-- Actuator & Health/Metric Endpoints -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

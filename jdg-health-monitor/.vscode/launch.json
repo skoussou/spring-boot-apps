@@ -1,0 +1,32 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - CheckActiveSessions",
+            "request": "launch",
+            "mainClass": "it.sia.controller.CheckActiveSessions",
+            "projectName": "jdg-health-monitor"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - MemoryMonitor",
+            "request": "launch",
+            "mainClass": "it.sia.controller.MemoryMonitor",
+            "projectName": "jdg-health-monitor"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - JDGHealthMonitorApplication",
+            "request": "launch",
+            "mainClass": "it.sia.app.JDGHealthMonitorApplication",
+            "projectName": "jdg-health-monitor"
+        },
+        {
+            "type": "java",
+            "name": "CodeLens (Launch) - DemoApplication",
+            "request": "launch",
+            "mainClass": "it.sia.app.DemoApplication",
+            "projectName": "jdg-health-monitor"
+        }
+    ]
+}
