@@ -20,17 +20,14 @@ Resources: https://github.com/fabric8io/fabric8-maven-plugin/tree/master/samples
 
 8. How to enable springboot app to use application-mysql.properties (https://lzone.de/blog/Openshift%20S2I%20and%20Spring%20profiles)
 
-	When porting Springboot applications to Openshift using S2I (source to image) directly from a git repo you cannot rely on a start script passing the proper -Dspring.profiles.active=<profile name> parameter like this
+* When porting Springboot applications to Openshift using S2I (source to image) directly from a git repo you cannot rely on a start script passing the proper -Dspring.profiles.active=<profile name> parameter like this
 
 	java -Dspring.profiles.active=development -jar yourApplication.jar
 
-	The only proper ways for injecting application configuration are
-
-	1. Add it to the artifact/repository (meeh)
-	2. Mount it using a config map
-	3. Pass it via Docker environment variables
-
-	And for Openshift variant #3 works fine as there is an environment variable *SPRING_PROFILES_ACTIVE* which you can add in your deployment configuration and set it to your favourite spring profile name.
+* The only proper ways for injecting application configuration are
+** Add it to the artifact/repository (meeh)
+** Mount it using a config map
+** Pass it via Docker environment variables --> And for Openshift variant #3 works fine as there is an environment variable *SPRING_PROFILES_ACTIVE* which you can add in your deployment configuration and set it to your favourite spring profile name.
 
 
 
