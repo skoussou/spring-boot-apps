@@ -3,7 +3,14 @@
 Resources: https://github.com/fabric8io/fabric8-maven-plugin/tree/master/samples
 
 
-1. mvn clean fabric8:deploy -DskipTests=true -P openshift & mvn clean fabric8:deploy fabric8:resource-apply -P openshift
+1. Build & Deploy Springboot Application 
+* First Time: 
+
+	$ mvn clean fabric8:deploy -DskipTests=true -P openshift
+* Reapplying Resources every other time
+
+	$ mvn clean fabric8:deploy fabric8:resource-apply -P openshift
+
 2. removed actuator readiness/healthiness probes as they fail
 3. create custom service vim src/main/fabric8/service.yml
 4. oc create -f vim src/main/fabric8/service.yml
@@ -15,6 +22,7 @@ Resources: https://github.com/fabric8io/fabric8-maven-plugin/tree/master/samples
 	{"id":1,"title":"The Player of Games","author":"Iain M. Banks"}[stkousso@stkousso spring-boot-bootstrap]$ 
 
 7. Retrieve Book Entry
+
 	$ curl -X GET http://springboot-ocp-bootstrap-rabbitmq.apps.labs-aws-430c.sandbox1287.opentlc.com/api/books
 	$ curl -X GET 'http://springboot-ocp-bootstrap-rabbitmq.apps.labs-aws-430c.sandbox1287.opentlc.com/api/books/title/The%20Player%20of%20Games'
 
