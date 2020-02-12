@@ -29,11 +29,14 @@ public class BookController {
 
     @GetMapping
     public Iterable<Book> findAll() {
+        System.out.println("FIND ALL BOOKS");
         return bookRepository.findAll();
     }
 
     @GetMapping("/title/{bookTitle}")
     public List<Book> findByTitle(@PathVariable String bookTitle) {
+        System.out.println("FIND BOOK ["+bookTitle+"]");
+
         return bookRepository.findByTitle(bookTitle);
     }
 
@@ -46,6 +49,8 @@ public class BookController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Book create(@RequestBody Book book) {
+        System.out.println("CREATE BOOK ["+book+"]");
+
         Book book1 = bookRepository.save(book);
         return book1;
     }

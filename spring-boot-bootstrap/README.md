@@ -10,3 +10,35 @@ This module contains articles about bootstrapping Spring Boot applications.
 - [Deploy a Spring Boot Application to OpenShift](https://www.baeldung.com/spring-boot-deploy-openshift)
 - [Deploy a Spring Boot Application to AWS Beanstalk](https://www.baeldung.com/spring-boot-deploy-aws-beanstalk)
 - [Guide to @SpringBootConfiguration in Spring Boot](https://www.baeldung.com/springbootconfiguration-annotation)
+
+Resources: https://github.com/fabric8io/fabric8-maven-plugin/tree/master/samples
+
+
+1. mvn clean fabric8:deploy -DskipTests=true -P openshift & mvn clean fabric8:deploy fabric8:resource-apply -P openshift
+2. removed actuator readiness/healthiness probes as they fail
+3. create custom service vim src/main/fabric8/service.yml
+4. oc create -f vim src/main/fabric8/service.yml
+5. oc expose svc spring-boot-bootstrap
+
+6. Create Book Entry
+
+	$ curl -d '{"title":"The Player of Games", "author":"Iain M. Banks"}' -H "Content-Type: application/json" -X POST http://springboot-ocp-bootstrap-rabbitmq.apps.labs-aws-430c.sandbox1287.opentlc.com/api/books
+	{"id":1,"title":"The Player of Games","author":"Iain M. Banks"}[stkousso@stkousso spring-boot-bootstrap]$ 
+
+7. Retrieve Book Entry
+	$ curl -X GET http://springboot-ocp-bootstrap-rabbitmq.apps.labs-aws-430c.sandbox1287.opentlc.com/api/books
+	$ curl -X GET 'http://springboot-ocp-bootstrap-rabbitmq.apps.labs-aws-430c.sandbox1287.opentlc.com/api/books/title/The%20Player%20of%20Games'
+
+8. How to enable springboot app to use application-mysql.properties (https://lzone.de/blog/Openshift%20S2I%20and%20Spring%20profiles)
+
+	When porting Springboot applications to Openshift using S2I (source to image) directly from a git repo you cannot rely on a start script passing the proper -Dspring.profiles.active=<profile name> parameter like this
+
+	java -Dspring.profiles.active=development -jar yourApplication.jar
+
+	The only proper ways for injecting application configuration are
+
+	1. Add it to the artifact/repository (meeh)
+	2. Mount it using a config map
+	3. Pass it via Docker environment variables
+
+	And for Openshift variant #3 works fine as there is an environment variable *SPRING_PROFILES_ACTIVE* which you can add in your deployment configuration and set it to your favourite spring profile name.

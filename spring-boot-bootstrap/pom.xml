@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>spring-boot-bootstrap</artifactId>
-    <name>spring-boot-bootstrap</name>
+    <artifactId>springboot-ocp-bootstrap</artifactId>
+    <name>springboot-ocp-bootstrap</name>
     <packaging>jar</packaging>
     <groupId>com.redhat</groupId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
 
-    <description>Demo project for Spring Boot</description>
+    <description>Demo project for Spring Boo on Openshiftt</description>
 
 
     <properties>
@@ -17,7 +17,7 @@
         <h2.version>1.4.197</h2.version>
         <mysql.version>6.0.6</mysql.version>
         <servlet.version>4.0.0</servlet.version>
-               <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
     </properties>
 
@@ -30,7 +30,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
-             <version>${spring-boot-starter.version}</version>
+            <version>${spring-boot-starter.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -45,7 +45,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>${mysql.version}</version>            
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -57,7 +57,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
             <version>${spring-boot-starter.version}</version>
-        </dependency>
+       </dependency>
+       <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-actuator</artifactId>
+            <version>${spring-boot-starter.version}</version>
+       </dependency>	    
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
@@ -74,87 +79,82 @@
     <profiles>
 
         <profile>
-            <id>openshiftsimple</id>
-            <build>
-                <resources>
-                    <resource>
-                        <directory>src/main/resources</directory>
-                        <excludes>
-                            <exclude>**/logback.xml</exclude>
-                        </excludes>
-                    </resource>
-                </resources>
-
-                <plugins>
-
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                        <version>2.2.4.RELEASE</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>repackage</goal>
-                                </goals>
-                            </execution>
-                        </executions>                        
-                    </plugin>
+            <id>openshift</id>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/cloud/config/*.java</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <excludeDevtools>false</excludeDevtools>
 
 
-                    <plugin>
-                        <groupId>io.fabric8</groupId>
-                        <artifactId>fabric8-maven-plugin</artifactId>
-                        <version>4.3.1</version>
-<configuration>
-  <images>  
-    <image>
-      <name>quay.io/skoussou/${project.artifactId}:${project.version}</name>
-      <!-- "alias" is used to correlate to the containers in the pod spec -->
-      <alias>${project.artifactId}</alias>
-      <build>
-        <from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift</from>
-        <!--assembly>
-          <basedir>/deployments</basedir>
-          <descriptorRef>artifact-with-dependencies</descriptorRef>
-        </assembly-->
-        <!--env>
-          <JAVA_LIB_DIR>/deployments</JAVA_LIB_DIR>
-          <JAVA_MAIN_CLASS>org.apache.camel.cdi.Main</JAVA_MAIN_CLASS>
-        </env-->
-      </build>
-    </image>
-  </images>
+                    <mainClass>com.redhat.Application</mainClass>
+                    <images>
+                        <image>
+                            <name>{image.user}/{image.name}:{image.tag}</name>
+                            <alias>springboot-ocp-bootstrap</alias>
+                            <tags>
+                                <tag>${project.version}</tag>
+                            </tags>
+                        </image>
+                    </images>
 
-      <authConfig>
-      <username>skousou@gmail.com</username>
-      <password>404keratea2011</password>
-    </authConfig>
 
-                            <resources>
-                                <labels>
-                                    <all>
-                                        <app>spring-boot-bootstrap</app>
-                                        <version>${project.version}</version>
-                                    </all>
-                                </labels>
-                            </resources>
-</configuration>
-                           <executions>
-                               <execution>
-                                   <goals>
-                                       <goal>resource</goal>
-                                       <goal>build</goal>
-                                   </goals>
-                               </execution>
-                           </executions>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
 
-                    </plugin>
-                </plugins>
-            </build>
+
+            </plugin>
+
+            <plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>fabric8-maven-plugin</artifactId>
+                <version>4.3.1</version>
+                <configuration>
+
+
+                    <generator>
+                        <includes>
+                            <include>spring-boot</include>
+                        </includes>
+
+                    </generator>
+
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>resource</goal>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+
+            </plugin>
+        </plugins>
+    </build>
         </profile>
 
 
-        <profile>
+        <!--profile>
             <id>openshift</id>
             <properties>
                 <spring-cloud-k8s.version>0.3.0.RELEASE</spring-cloud-k8s.version>
@@ -227,18 +227,18 @@
                         <groupId>io.fabric8</groupId>
                         <artifactId>fabric8-maven-plugin</artifactId>
                         <version>${fabric8.maven.plugin.version}</version>
-                        <!--configuration>
+                        <configuration>
                             <authConfig>
       <username>skousou@gmail.com</username>
       <password>404keratea2011</password>
     </authConfig>
                             <images>
       <image>
-        <name>spring-boot-apps/spring-boot-bootstrap:${project.version}</name>
+        <name>spring-boot-apps/springboot-ocp-bootstrap:${project.version}</name>
       </image>
     </images>
                             <skipTag>true</skipTag>
-                        </configuration-->
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>fmp</id>
@@ -255,9 +255,9 @@
           <images>
             <image>
               <registry>quay.io</registry>
-              <name>skoussou/spring-boot-bootstrap:${project.version}</name>
-              <alias>spring-boot-bootstrap</alias>
-              <!--build>
+              <name>skoussou/springboot-ocp-bootstrap:${project.version}</name>
+              <alias>springboot-ocp-bootstrap</alias>
+              <build>
                 <from>openjdk:latest</from>
                 <assembly>
                   <descriptorRef>artifact</descriptorRef>
@@ -268,7 +268,7 @@
                 <wait>
                   <log>Hello World!</log>
                 </wait>
-              </run-->
+              </run>
             </image>
           </images>
           <authConfig>
@@ -327,7 +327,7 @@
                         <version>${thin.version}</version>
                         <executions>
                             <execution>
-                                <!-- Download the dependencies at build time -->
+
                                 <id>resolve</id>
                                 <goals>
                                     <goal>resolve</goal>
@@ -338,7 +338,7 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
+        </profile-->
     </profiles>
 
     <build>
