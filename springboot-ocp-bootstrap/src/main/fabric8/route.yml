@@ -1,16 +1,17 @@
 kind: Route
 apiVersion: route.openshift.io/v1
-metadata:
-  name: springboot-ocp-bootstrap
-  labels:
-    app: springboot-ocp-bootstrap
-    expose: 'true'
-    group: com.redhat
+# Can do the bellow from fabric8
+#metadata:
+#  name: springboot-ocp-bootstrap
+#  labels:
+#    app: springboot-ocp-bootstrap
+#    expose: 'true'
+#    group: com.redhat
 spec:
+  # The host can be auto populated if wanted
   host: springboot-ocp-bootstrap-rabbitmq.apps.labs-aws-430c.sandbox1287.opentlc.com
   to:
     kind: Service
-    name: springboot-ocp-bootstrap
     weight: 100
   port:
     targetPort: http
