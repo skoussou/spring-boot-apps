@@ -1,0 +1,36 @@
+ansiColor('xterm') {
+
+  def service_name = 'springboot-ocp-bootstrap'
+  def deploy_config = 'springboot-ocp-bootstrap'
+  def deploy_environment = 'springtboot-demo'
+  def git_repo = 'https://github.com/skoussou/spring-boot-apps.git/'
+
+  node('maven') {
+
+    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]]);
+
+    stage('Cheking out Source Code'){
+        git branch: 'master', changelog: false, credentialsId: 'jenkins-gitlab', poll: true, url: "${git_repo}"
+    }
+
+    stage("Compiling & Running Unit Tests") {
+        configFileProvider([configFile(fileId: '5629e75f-35d8-459f-b7eb-df924f186a41', variable: 'NEXUS_MAVEN_SETTINGS')]) {
+            sh "mvn clean test install"
+        }
+    }
+    stage('Building Image') {
+        sh "echo S2I Image build happens here"
+        configFileProvider([configFile(fileId: '5629e75f-35d8-459f-b7eb-df924f186a41', variable: 'NEXUS_MAVEN_SETTINGS')]) {
+            sh "mvn package fabric8:build fabric8:resource fabric8:resource-apply -Dfabric8.openshift.enableAutomaticTrigger=false -Dfabric8.openshift.imageChangeTrigger=false -Dfabric8.namespace={amazon_deploy_environment}"
+        }
+    }
+
+    stage('Deploy to Amazon Development') {
+        sh "echo Deploy to development project"
+        sh "oc rollout status ${deploy_config} -w -n ${amazon_deploy_environmen}"
+    }
+
+  }
+}
+
+
