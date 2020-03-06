@@ -11,30 +11,29 @@
 	
 * Installed Database
 ** h2 (no installation see application-h2.properties)
-** mysql local (installaton required and config see application-mysql.properties and pm.xml)
+** mysql local (installaton required and config see link:./src/main/resources/application-mysql.properties[application-mysql.properties] and link:pom.xml[pom.xml])
 ** remote database custom (eg. https://blog.openshift.com/openshift-connecting-database-using-port-forwarding/[Connecting to a Database Using Port Forwarding in OpenShift])
 	
 * KJAR
-** we use [URL TBD]payments KJAR
+** we use https://github.com/skoussou/spring-boot-apps/tree/master/rhpam-rabbitmq-kie-server/payments-kjar[payments] KJAR
 ** Build it as follows
 	
-	mvn clean deploy -s /home/stkousso/.m2/hapoalim-settings.xml
-
+	mvn clean deploy -s ../hapoalim-bpm-kie-server/hapoalim-settings.xml
 
 === h2 local profile
 
-export SPRING_RABBITMQ_HOST=127.0.0.1 
-export SPRING_RABBITMQ_PORT=5672 
-export SPRING_RABBITMQ_USERNAME=pamservice 
-export SPRING_RABBITMQ_PASSWORD=pamservice
+	export SPRING_RABBITMQ_HOST=127.0.0.1 
+	export SPRING_RABBITMQ_PORT=5672 
+	export SPRING_RABBITMQ_USERNAME=pamservice 
+	export SPRING_RABBITMQ_PASSWORD=pamservice
 
-oc port-forward rabbitmq-0 9672:5672
+	oc port-forward rabbitmq-0 9672:5672
 
 
-* pam-rabbitmt-service.xml: defines KJAR to upload (since we use *LocalContainersStartupStrategy* we use kie.module.gav=${SB_KIE_MODULE_GAV:com.redhat:payments:4.7.0}
+* pam-rabbitmt-service.xml: defines KJAR to upload (since we use *LocalContainersStartupStrategy* we use kie.module.gav=${SB_KIE_MODULE_GAV:com.redhat:payments:4.12.0}
 * Build and Run (locally Spring-Boot app with h2, rabbitmq port-forward to port 5672 required, pam-rabbitmq-service.xml configuration with com.redhat:payments:VERSION)
 
-	mvn clean package spring-boot:run -Dspring.profiles.active=h2 -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.mode=DEVELOPMENT -DSB_KIE_MODULE_GAV=com.redhat:payments:4.11.0
+	mvn clean package spring-boot:run -Dspring.profiles.active=h2 -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.mode=DEVELOPMENT -DSB_KIE_MODULE_GAV=com.redhat:payments:4.12.0
 
 
 * SWAGGER Available 
@@ -46,7 +45,8 @@ oc port-forward rabbitmq-0 9672:5672
 * Connection to (BC) Controller 
 ** kieserver.controllers=ws://127.0.0.1:8080/business-central/websocket/controller
 ** username/password (look at pam-rabbitmq-service.xml and has to match BC user logged in)
-* TEST
+* TEST with this profile (see springboot logs)
+
 	curl -u 'demo:demo' -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/message/start/chequestransactions/15
 	curl -u 'demo:demo' -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/message/continue/15/CHEQUES_CREATED
 	curl -u 'demo:demo' -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/message/continue/15/CHEQUES_SCANNED
@@ -54,7 +54,7 @@ oc port-forward rabbitmq-0 9672:5672
 
 === mysql local profile
 
-* RabbitMQ Configurations exported as ENV Variables (or added to link:./src/main/resources/application-mysql.properties[application-mysql.properties] and for Quartz enabled link:./src/main/resources/application-mysql.properties[application-mysql.properties])
+* RabbitMQ Configurations exported as ENV Variables (or added to link:./src/main/resources/application-mysql.properties[application-mysql.properties] and for Quartz enabled link:./src/main/resources/application-mysql-quartz.properties[application-mysql-quartz.properties])
 
 	export SPRING_RABBITMQ_HOST=127.0.0.1 
 	export SPRING_RABBITMQ_PORT=5672 
@@ -69,30 +69,30 @@ oc port-forward rabbitmq-0 9672:5672
 
 * Getting content of DB running/history instances (also look at link:.RHPAM-API-REQUESTS.txt[RHPAM-API-REQUESTS.txt] 
 
-mysql>  select id,correlationKey,externalId,processId,processInstanceId,processVersion,slaCompliance,sla_due_date,start_date,status from ProcessInstanceLog;
-+----+----------------+----------------------------+---------------------+-------------------+----------------+---------------+---------------------+---------------------+--------+
-| id | correlationKey | externalId                 | processId           | processInstanceId | processVersion | slaCompliance | sla_due_date        | start_date          | status |
-+----+----------------+----------------------------+---------------------+-------------------+----------------+---------------+---------------------+---------------------+--------+
-|  1 | 1              | com.redhat:payments:4.11.0 | chequestransactions |                 1 | 2.0            |             3 | 2020-03-04 14:29:25 | 2020-03-04 14:26:25 |      1 |
-|  2 | 2              | com.redhat:payments:4.11.0 | chequestransactions |                 2 | 2.0            |             3 | 2020-03-05 09:26:24 | 2020-03-05 09:23:24 |      1 |
-|  3 | 3              | com.redhat:payments:4.11.0 | my-process          |                54 | 1.0            |             0 | NULL                | 2020-03-05 19:28:48 |      2 |
-|  4 | 5              | com.redhat:payments:4.11.0 | my-process          |                55 | 1.0            |             0 | NULL                | 2020-03-05 19:44:51 |      2 |
-|  5 | 5              | com.redhat:payments:4.11.0 | my-process          |                56 | 1.0            |             0 | NULL                | 2020-03-05 19:49:59 |      2 |
-|  6 | 101            | com.redhat:payments:4.11.0 | my-process          |                57 | 1.0            |             0 | NULL                | 2020-03-05 20:25:14 |      2 |
-|  7 | 102            | com.redhat:payments:4.11.0 | my-process          |                58 | 1.0            |             0 | NULL                | 2020-03-05 20:33:53 |      2 |
-+----+----------------+----------------------------+---------------------+-------------------+----------------+---------------+---------------------+---------------------+--------+
-7 rows in set (0.00 sec)
+	mysql>  select id,correlationKey,externalId,processId,processInstanceId,processVersion,slaCompliance,sla_due_date,start_date,status from ProcessInstanceLog;
+	+----+----------------+----------------------------+---------------------+-------------------+----------------+---------------+---------------------+---------------------+--------+
+	| id | correlationKey | externalId                 | processId           | processInstanceId | processVersion | slaCompliance | sla_due_date        | start_date          | status |
+	+----+----------------+----------------------------+---------------------+-------------------+----------------+---------------+---------------------+---------------------+--------+
+	|  1 | 1              | com.redhat:payments:4.11.0 | chequestransactions |                 1 | 2.0            |             3 | 2020-03-04 14:29:25 | 2020-03-04 14:26:25 |      1 |
+	|  2 | 2              | com.redhat:payments:4.11.0 | chequestransactions |                 2 | 2.0            |             3 | 2020-03-05 09:26:24 | 2020-03-05 09:23:24 |      1 |
+	|  3 | 3              | com.redhat:payments:4.11.0 | my-process          |                54 | 1.0            |             0 | NULL                | 2020-03-05 19:28:48 |      2 |
+	|  4 | 5              | com.redhat:payments:4.11.0 | my-process          |                55 | 1.0            |             0 | NULL                | 2020-03-05 19:44:51 |      2 |
+	|  5 | 5              | com.redhat:payments:4.11.0 | my-process          |                56 | 1.0            |             0 | NULL                | 2020-03-05 19:49:59 |      2 |
+	|  6 | 101            | com.redhat:payments:4.11.0 | my-process          |                57 | 1.0            |             0 | NULL                | 2020-03-05 20:25:14 |      2 |
+	|  7 | 102            | com.redhat:payments:4.11.0 | my-process          |                58 | 1.0            |             0 | NULL                | 2020-03-05 20:33:53 |      2 |
+	+----+----------------+----------------------------+---------------------+-------------------+----------------+---------------+---------------------+---------------------+--------+
+	7 rows in set (0.00 sec)
 
 
 * Build & Run *NON-Quartz Scheduler* (backing on DB) and getting from NEXUS KJAR (change version of KJAR)
 
-	mvn clean package spring-boot:run -Dspring.profiles.active=mysql-quartz -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.mode=DEVELOPMENT -DSB_KIE_MODULE_GAV=com.redhat:payments:4.12.0 -Dkie.maven.settings.custom=/home/stkousso/.m2/hapoalim-settings.xml -s ~/.m2/hapoalim-settings.xml
+	mvn clean package spring-boot:run -Dspring.profiles.active=mysql-quartz -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.mode=DEVELOPMENT -DSB_KIE_MODULE_GAV=com.redhat:payments:4.12.0 -Dkie.maven.settings.custom=remote-nexus-settings.xml -s remote-nexus-settings.xml
 
 
 
 * Build & Run *With Quartz Scheduler* (backing on DB) and getting from NEXUS KJAR (change version of KJAR)
 
-	mvn clean package spring-boot:run -Dspring.profiles.active=mysql-quartz -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.mode=DEVELOPMENT -DSB_KIE_MODULE_GAV=com.redhat:payments:4.12.0 -Dkie.maven.settings.custom=/home/stkousso/.m2/hapoalim-settings.xml -s ~/.m2/hapoalim-settings.xml
+	mvn clean package spring-boot:run -Dspring.profiles.active=mysql-quartz -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.mode=DEVELOPMENT -DSB_KIE_MODULE_GAV=com.redhat:payments:4.12.0 -Dkie.maven.settings.custom=remote-nexus-settings.xml -s remote-nexus-settings.xml
 
 
 * Some errors (I believe due to MySQL not Quartz confiigs) appear but seem not to affect DB or Timer/Scheduler functionality
