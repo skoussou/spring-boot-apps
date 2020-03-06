@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.redhat</groupId>
+    <artifactId>pam-rabbitmq-service</artifactId>
+    <version>1.6.1</version>
+    <packaging>jar</packaging>
+    <name>pam-rabbitmq-service</name>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.1.RELEASE</version>
+    </parent>
+
+    <properties>
+        <!--version.org.kie>7.23.0.Final-redhat-00003</version.org.kie-->
+        <version.org.kie>7.30.0.Final-redhat-00003</version.org.kie>
+        <narayana.version>5.9.0.Final</narayana.version>
+
+        <!--fabric8.version>3.5.40</fabric8.version-->
+        <fabric8.version>4.3.1</fabric8.version>
+        <!--fabric8.version>4.5.2</fabric8.version-->
+        <fabric8-maven-plugin.version>3.5.38</fabric8-maven-plugin.version>
+
+        <fabric8.resources.limits.memory>1Gi</fabric8.resources.limits.memory>
+        <fabric8.resources.limits.cpu>1</fabric8.resources.limits.cpu>
+        <fabric8.resources.requests.memory>1Gi</fabric8.resources.requests.memory>
+        <fabric8.resources.requests.cpu>1</fabric8.resources.requests.cpu>
+
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-server-spring-boot-starter</artifactId>
+            <version>${version.org.kie}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kie</groupId>
+            <artifactId>kie-internal</artifactId>
+            <version>${version.org.kie}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-flow</artifactId>
+            <version>7.30.0.Final-redhat-00003</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jbpm</groupId>
+            <artifactId>jbpm-services-api</artifactId>
+            <version>7.30.0.Final-redhat-00003</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kie.server</groupId>
+            <artifactId>kie-server-controller-websocket-client</artifactId>
+            <version>${version.org.kie}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+        </dependency>
+
+        <!--dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+        </dependency-->
+
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-rs-service-description-swagger</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger</groupId>
+            <artifactId>swagger-jaxrs</artifactId>
+            <version>1.5.15</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>swagger-ui</artifactId>
+            <version>2.2.10</version>
+        </dependency>
+
+
+        <!-- AMQP Dependencies -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+
+        <!-- RabbitMQ Broker dependencies -->
+        <dependency>
+            <groupId>org.apache.qpid</groupId>
+            <artifactId>qpid-broker</artifactId>
+            <version>6.0.4</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+
+    <!-- RabbitMQ Java Client (Required by KJAR) -->
+    <dependency>
+        <groupId>com.rabbitmq</groupId>
+        <artifactId>amqp-client</artifactId>
+        <version>5.8.0</version>
+      </dependency>         
+
+
+    </dependencies>
+
+
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <!-- CHANGE HERE by your team nexus server -->
+            <url>http://nexus-cicd-pam.apps.cluster-hapoalim-5d5c.hapoalim-5d5c.example.opentlc.com/repository/maven-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <!-- CHANGE HERE by your team nexus server -->
+            <url>http://nexus-cicd-pam.apps.cluster-hapoalim-5d5c.hapoalim-5d5c.example.opentlc.com/repository/maven-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+
+        <profile>
+            <id>h2</id>
+        </profile>
+
+        <profile>
+            <id>mysql</id>
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>mysql-quartz</id>
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>        
+
+        <profile>
+            <id>openshift</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <!-- Specify the repositories containing RHOAR artifacts. 
+            <repositories>
+                <repository>
+			<id>redhat-ga</id>
+                    <name>Red Hat GA Repository</name>
+		    <url>http://nexus3.apps.openshift.telkom.co.za/repository/maven-all-public</url>
+
+	            <url>http://nexus-cicd-pam.apps.cluster-hapoalim-8074.hapoalim-8074.example.opentlc.com/repository/maven-all-public</url>
+                </repository>
+		    </repositories>
+             -->
+
+            <!-- Specify the repositories containing the plugins used to execute the build of your application.
+            <pluginRepositories>
+                <pluginRepository>
+                    <id>redhat-ga</id>
+                    <name>Red Hat GA Repository</name>
+                    <url>http://nexus3.apps.openshift.telkom.co.za/repository/maven-all-public</url>
+
+		    <url>http://nexus-cicd-pam.apps.cluster-hapoalim-8074.hapoalim-8074.example.opentlc.com/repository/maven-all-public</url>
+                </pluginRepository>
+	</pluginRepositories>
+		-->
+
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>fabric8-maven-plugin</artifactId>
+                        <version>${fabric8.version}</version>
+                        <configuration>
+                            <buildStrategy>docker</buildStrategy>
+                            <images>
+                                <image>
+                                    <!--name>docker-registry.default.svc:5000/amazon-cicd/pam-rabbitmq-service:1.0.0</name-->
+                                    <!--name>{image.user}/{image.name}:{image.tag}</name-->
+                                    <name>image-registry.openshift-image-registry.svc:5000/rabbitmq/pam-rabbitmq-service:${project.version}</name>
+                                    <alias>pam-rabbitmq-service</alias>
+                                    <build>
+                                        <dockerFileDir>${project.basedir}</dockerFileDir>
+                                        <!--contextDir>${project.basedir}</contextDir-->
+
+                                        <dockerFile>Dockerfile</dockerFile>
+                                        <filter>@</filter>
+                                        <assembly>
+                                            <mode>dir</mode>
+                                            <name>target</name>
+                                            <inline xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.2 http://maven.apache.org/xsd/assembly-1.1.2.xsd">
+                                                <files>
+                                                    <file>
+                                                        <source>${project.basedir}/target/${project.build.finalName}.jar</source>
+                                                        <outputDirectory>./</outputDirectory>
+                                                    </file>
+                                                </files>
+                                            </inline>
+                                        </assembly>
+                                    </build>
+                                </image>
+                            </images>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
+    </profiles>
+
+
+</project>

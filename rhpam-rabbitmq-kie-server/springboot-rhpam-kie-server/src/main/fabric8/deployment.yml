@@ -1,0 +1,106 @@
+a/piVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+  labels:
+    app: pam-rabbitmq-service
+  name: pam-rabbitmq-service
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: pam-rabbitmq-service
+    deploymentconfig: pam-rabbitmq-service
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+      creationTimestamp: null
+      labels:
+        app: pam-rabbitmq-service
+        deploymentconfig: pam-rabbitmq-service
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTIONS
+              value: "-Dorg.drools.server.filter.classes=true -Dspring.profiles.active=openshift -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.id=pam-rabbitmq-service -Dorg.kie.server.mode=PRODUCTION -Dkie.maven.settings.custom=/deployments/maven/repository/settings.xml -Dorg.guvnor.m2repo.dir=/deployments/maven/repository -Dorg.kie.server.location=http://pam-rabbitmq-service:8090/rest/server"
+            - name: M2_HOME
+              value: "/deployments/maven/repository"
+            - name: HTTP_PROXY
+              value: ""
+            - name: HTTPS_PROXY
+              value: ""
+            - name: http_proxy
+              value: ""
+            - name: https_proxy
+              value: ""
+            - name: GC_MAX_METASPACE_SIZE
+              value: "512"
+            - name: SB_KIE_MODULE_GAV
+              value: 'com.redhat:payments:4.12.0'
+            - name: SB_APP_API_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: kie-api-credentials
+                  key: kie-api-svc-user
+            - name: SB_APP_API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: kie-api-credentials
+                  key: kie-api-svc-password
+            - name: SPRING_RABBITMQ_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-connection-details 
+                  key: rabbitmq-host
+            - name: SPRING_RABBITMQ_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-connection-details 
+                  key: rabbitmq-port
+            - name: SPRING_RABBITMQ_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-connection-details 
+                  key: rabbitmq-username
+            - name: SPRING_RABBITMQ_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-connection-details 
+                  key: rabbitmq-password
+          image: docker-registry.default.svc:5000/rabbitmq/pam-rabbitmq-service:1.6.1
+          name: pam-rabbitmq-service
+          volumeMounts:
+            - mountPath: /deployments/pam-rabbitmq-service.xml
+              name: kie-server-state-volume
+              subPath: pam-rabbitmq-service.xml
+            - mountPath: /deployments/maven/repository/settings.xml
+              name: mvn-settings-volume
+              subPath: settings.xml
+      volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: pam-rabbitmq-service.xml
+                path: pam-rabbitmq-service.xml
+            name: pam-rabbitmq-service-kie-server-state
+          name: kie-server-state-volume
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: settings.xml
+                path: settings.xml
+            name: mvn-settings
+          name: mvn-settings-volume
+  test: false
+  triggers:
+    - type: ConfigChange

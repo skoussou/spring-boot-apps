@@ -1,0 +1,83 @@
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+  labels:
+    app: amazon-buyjourney-service
+  name: amazon-buyjourney-service
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    app: amazon-buyjourney-service
+    deploymentconfig: amazon-buyjourney-service
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+      creationTimestamp: null
+      labels:
+        app: amazon-buyjourney-service
+        deploymentconfig: amazon-buyjourney-service
+    spec:
+      containers:
+        - env:
+            - name: JAVA_OPTIONS
+              value: "-Dspring.profiles.active=openshift -Dorg.kie.server.startup.strategy=LocalContainersStartupStrategy -Dorg.kie.server.id=amazon-buyjourney-service -Dorg.kie.server.mode=PRODUCTION -Dkie.maven.settings.custom=/deployments/maven/repository/settings.xml -Dorg.guvnor.m2repo.dir=/deployments/maven/repository -Dorg.kie.server.location=http://amazon-buyjourney-service:8090/rest/server"
+            - name: M2_HOME
+              value: "/deployments/maven/repository"
+            - name: HTTP_PROXY
+              value: ""
+            - name: HTTPS_PROXY
+              value: ""
+            - name: http_proxy
+              value: ""
+            - name: https_proxy
+              value: ""
+            - name: GC_MAX_METASPACE_SIZE
+              value: "512"
+          image: image-registry.openshift-image-registry.svc:5000/rabbitmq/amazon-buyjourney-service:1.0.1
+          name: amazon-buyjourney-service
+          volumeMounts:
+            - mountPath: /deployments/amazon-buyjourney-service.xml
+              name: kie-server-state-volume
+              subPath: amazon-buyjourney-service.xml
+            - mountPath: /deployments/maven/repository/settings.xml
+              name: mvn-settings-volume
+              subPath: settings.xml
+      volumes:
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: amazon-buyjourney-service.xml
+                path: amazon-buyjourney-service.xml
+            name: amazon-buyjourney-service-kie-server-state
+          name: kie-server-state-volume
+        - configMap:
+            defaultMode: 420
+            items:
+              - key: settings.xml
+                path: settings.xml
+            name: mvn-settings
+          name: mvn-settings-volume
+  test: false
+  triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+          - amazon-buyjourney-service
+        from:
+          kind: ImageStreamTag
+          name: 'amazon-buyjourney-service:latest'
+          namespace: rabbitmq
+      type: ImageChange

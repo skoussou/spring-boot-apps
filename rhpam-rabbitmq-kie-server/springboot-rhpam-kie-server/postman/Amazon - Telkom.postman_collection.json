@@ -1,0 +1,410 @@
+{
+	"info": {
+		"_postman_id": "f3e8f420-0e3b-499f-a6f9-9e94de1c9a1c",
+		"name": "Amazon - Telkom",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Process Instances ",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "telkom123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"test, gio\"\n}\n"
+				},
+				"url": {
+					"raw": "http://amazon-buyjourney-service-amazon-pam-auth.apps.openshift.telkom.co.za/rest/server/queries/processes/instances",
+					"protocol": "http",
+					"host": [
+						"amazon-buyjourney-service-amazon-pam-auth",
+						"apps",
+						"openshift",
+						"telkom",
+						"co",
+						"za"
+					],
+					"path": [
+						"rest",
+						"server",
+						"queries",
+						"processes",
+						"instances"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Process Instance - image ",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "telkom123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"test, gio\"\n}\n"
+				},
+				"url": {
+					"raw": "http://amazon-buyjourney-service-amazon-pam-auth.apps.openshift.telkom.co.za/rest/server/containers/za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2/images/processes/instances/1",
+					"protocol": "http",
+					"host": [
+						"amazon-buyjourney-service-amazon-pam-auth",
+						"apps",
+						"openshift",
+						"telkom",
+						"co",
+						"za"
+					],
+					"path": [
+						"rest",
+						"server",
+						"containers",
+						"za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2",
+						"images",
+						"processes",
+						"instances",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Process Definitions",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "telkom123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"test, gio\"\n}\n"
+				},
+				"url": {
+					"raw": "http://amazon-buyjourney-service-amazon-pam-auth.apps.openshift.telkom.co.za/rest/server/containers/za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2/processes",
+					"protocol": "http",
+					"host": [
+						"amazon-buyjourney-service-amazon-pam-auth",
+						"apps",
+						"openshift",
+						"telkom",
+						"co",
+						"za"
+					],
+					"path": [
+						"rest",
+						"server",
+						"containers",
+						"za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2",
+						"processes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List Containers",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "telkom123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"bcHost\": \"localhost\",\n    \"bcPort\": 8080,\n    \"oldDeployment\": \"com.redhat.bpm:timer-migration:1.0\",\n    \"newDeployment\": \"com.redhat.bpm:timer-migration2\",\n    \"nodeMappging\": {\n    },\n    \"processDefinitionMapping\": {\n    }\n}\n"
+				},
+				"url": {
+					"raw": "http://amazon-buyjourney-service-amazon-pam-auth.apps.openshift.telkom.co.za/rest/server/containers",
+					"protocol": "http",
+					"host": [
+						"amazon-buyjourney-service-amazon-pam-auth",
+						"apps",
+						"openshift",
+						"telkom",
+						"co",
+						"za"
+					],
+					"path": [
+						"rest",
+						"server",
+						"containers"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start CheckOut Process",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "telkom123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n}"
+				},
+				"url": {
+					"raw": "http://amazon-buyjourney-service-amazon-pam-auth.apps.openshift.telkom.co.za/rest/server/containers/za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2/processes/za.co.telkom.amazon.buyjourney.CheckOut/instances",
+					"protocol": "http",
+					"host": [
+						"amazon-buyjourney-service-amazon-pam-auth",
+						"apps",
+						"openshift",
+						"telkom",
+						"co",
+						"za"
+					],
+					"path": [
+						"rest",
+						"server",
+						"containers",
+						"za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2",
+						"processes",
+						"za.co.telkom.amazon.buyjourney.CheckOut",
+						"instances"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signal by Process Instance and signal name",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "telkom123",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "admin",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"test, gio\"\n}\n"
+				},
+				"url": {
+					"raw": "http://amazon-buyjourney-service-amazon-pam-auth.apps.openshift.telkom.co.za/rest/server/containers/za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2/processes/instances/${instance_id}/signal/${signal_name}",
+					"protocol": "http",
+					"host": [
+						"amazon-buyjourney-service-amazon-pam-auth",
+						"apps",
+						"openshift",
+						"telkom",
+						"co",
+						"za"
+					],
+					"path": [
+						"rest",
+						"server",
+						"containers",
+						"za.co.amazon.telkom:amazon-buyjourney-bpm:1.0.2",
+						"processes",
+						"instances",
+						"${instance_id}",
+						"signal",
+						"${signal_name}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BC - dashboard",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "JsiVeq8!",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "executionUser",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"test, gio\"\n}\n"
+				},
+				"url": {
+					"raw": "http://amazon-buyjourney-service-amazon-pam-auth.apps.openshift.telkom.co.za/rest/server/queries/definitions/jbpmProcessInstances/filtered-data?mapper=RawList&page=0&pageSize=10",
+					"protocol": "http",
+					"host": [
+						"amazon-buyjourney-service-amazon-pam-auth",
+						"apps",
+						"openshift",
+						"telkom",
+						"co",
+						"za"
+					],
+					"path": [
+						"rest",
+						"server",
+						"queries",
+						"definitions",
+						"jbpmProcessInstances",
+						"filtered-data"
+					],
+					"query": [
+						{
+							"key": "mapper",
+							"value": "RawList"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "pageSize",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "bd3e96d7-7e3d-434e-bad3-c0998d052f0e",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1fb40743-4968-40cb-a69f-3ccd062789a7",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

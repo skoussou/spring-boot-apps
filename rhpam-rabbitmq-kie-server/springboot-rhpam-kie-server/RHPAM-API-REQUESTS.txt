@@ -1,0 +1,144 @@
+https://www.jbpm.org/api-docs/kie-server/paths.html#_process_instances_resource
+
+#export PAM_SERVICE_URL_PATH=$PAM_SERVICE_URL_PATH
+export PAM_SERVICE_URL_PATH=http://pam-rabbitmq-service-rabbitmq.apps.na311.openshift.opentlc.com
+
+
+curl -u 'admin:hapoalim!123' -X GET $PAM_SERVICE_URL_PATH/rest/server/containers
+
+=========================================
+| CREATE CONTAINER                      |
+=========================================
+
+alias	|project
+new-hire	|new-hire
+--------------------
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X PUT $PAM_SERVICE_URL_PATH/rest/server/containers/baz -d "{ \"container-id\" : \"baz\",  \"release-id\" : { \"group-id\" : \"com.redhat\", \"artifact-id\" : \"new-hire\", \"version\" : \"1.0.0\" } }"
+
+curl -u admin:telkom123 -H "accept: application/json" -H "content-type: application/json" -X PUT $PAM_SERVICE_URL_PATH/rest/server/containers/new-hire -d "{ \"container-id\" : \"new-hire\",  \"release-id\" : { \"group-id\" : \"com.redhat\", \"artifact-id\" : \"new-hire\", \"version\" : \"1.0.0\" } }"
+
+baz|order-management-dmn
+--------------------
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X PUT $PAM_SERVICE_URL_PATH/rest/server/containers/baz -d "{ \"container-id\" : \"baz\",  \"release-id\" : { \"group-id\" : \"com.demo\", \"artifact-id\" : \"order-management-dmn\", \"version\" : \"2.0.0\" } }"
+
+
+=========================================
+| START PROCESS INSTANCE                |
+=========================================
+
+alias	|project	|processID
+baz	|new-hire	|new-hire
+--------------------
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/server/containers/baz/processes/new-hire/instances
+
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/server/containers/new-hire/processes/new-hire/instances
+
+
+=========================================
+| DELETE CONTAINER                      |
+=========================================
+
+alias/kieContainerId
+new-hire
+--------------------
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X DELETE $PAM_SERVICE_URL_PATH/rest/server/containers/new-hire
+
+
+=========================================
+| GET/DELETE PROCESS INSTANCE               |
+=========================================
+
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X GET $PAM_SERVICE_URL_PATH/rest/server/containers/com.redhat:payments:4.12.0/processes/instances/
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X DELETE $PAM_SERVICE_URL_PATH/rest/server/containers/new-hire/processes/instances/2
+
+=========================================
+| GET IMAGE of PROCESS INSTANCE         |
+=========================================
+	
+select externalId, processInstanceId, correlationKey, status from ProcessInstanceLog; 
+
+USE the processInstanceId below & KJAR that created process must be still available
+
+Annotated SVG with Instance Progress																		   
+--------------------------------------
+[ALIAS] 	curl -u 'admin:hapoalim!123' -H "accept: application/svg+xml" -H "content-type: application/json" -X GET $PAM_SERVICE_URL_PATH/rest/server/containers/payments/images/processes/instances/43653 --output process43653.svg
+[ContainerID]	curl -u 'admin:hapoalim!123' -H "accept: application/svg+xml" -H "content-type: application/json" -X GET $PAM_SERVICE_URL_PATH"/rest/server/containers/com.redhat:payments:4.7.0/images/processes/instances/42402?svgCompletedColor=%23C0C0C0&svgCompletedBorderColor=%23030303&svgActiveBorderColor=%23FF0000" --output process442402.svg
+
+Definition SVG (WORKS)
+---------------------
+[WORKS] curl -u 'admin:hapoalim!123' -H "accept: application/svg+xml"   -X GET  $PAM_SERVICE_URL_PATH"/rest/server/containers/payments/images/processes/chequestransactions" --output chequestransactions.svg
+[WORKS] curl -u 'admin:hapoalim!123' -H "accept: application/svg+xml"  -X GET   $PAM_SERVICE_URL_PATH"/rest/server/containers/payments/images/processes/my-process" --output my-process.svg
+
+curl -u 'pamAdmin:pamAdmin740!' -H "accept: application/svg+xml"  -X GET  "http://127.0.0.1:8090/rest/server/containers/payments/images/processes/1?svgCompletedColor=%23C0C0C0&svgCompletedBorderColor=%23030303&svgActiveBorderColor=%23FF0000" -H  "accept: application/svg+xml" --output process1.svg
+
+
+=========================================
+| GET PROCESS DEFINITIONS               |
+=========================================
+
+curl -X GET --header 'Accept: application/json' 'GET $PAM_SERVICE_URL_PATH/rest/server/containers/payments/processes?pageSize=10&sortOrder=true'
+
+
+==============================================================================================
+| START Process via Message - custom Functionality requires SB Based hapoalim-bpm-kie-server |
+==============================================================================================
+
+[DON'T USE OTHER THAN TEST Of KJAR] NOTE VIA MESSAGE, via ProcessService directly: curl -u admin:telkom123 -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/start
+
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/message/start/new-hire/1
+
+
+=================================================================================================
+| CONTINUE Process via Message - custom Functionality requires SB Based hapoalim-bpm-kie-server |
+=================================================================================================
+																      
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/message/continue/1/CHEQUES_CREATED
+
+
+==============================================================================================
+| START Process via Message - custom Functionality requires SB Based hapoalim-bpm-kie-server |
+==============================================================================================
+
+[DON'T USE OTHER THAN TEST Of KJAR] NOTE VIA MESSAGE, via ProcessService directly: curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/start
+
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/message/start/chequestransactions/6
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/message/start/my-process/17
+
+=================================================================================================
+| CONTINUE Process via Message - custom Functionality requires SB Based hapoalim-bpm-kie-server |
+=================================================================================================
+																      
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/message/continue/6/CHEQUES_CREATED
+curl -u 'admin:hapoalim!123' -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/message/continue/6/CHEQUES_SCANNED
+
+
+Local h2 requests (credentials matching bc controller)
+------------------------------------------------------------
+curl -u 'pamAdmin:pamAdmin' -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/message/start/chequestransactions/1
+curl -u 'pamAdmin:pamAdmin' -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/message/continue/1/CHEQUES_CREATED
+curl -u 'pamAdmin:pamAdmin' -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/message/continue/1/CHEQUES_SCANNED
+
+Local mysql requests (credentials matching bc controller)
+------------------------------------------------------------
+curl -u 'pamAdmin:pamAdmin'  -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/message/start/my-process/1
+curl -u 'pamAdmin:pamAdmin'  -H "accept: application/json" -H "content-type: application/json" -X POST http://127.0.0.1:8090/rest/pam/process/start/com.redhat:payments:4.12.0/my-process
+
+
+curl -u 'admin:hapoalim!123'  -H "accept: application/json" -H "content-type: application/json" -X POST $PAM_SERVICE_URL_PATH/rest/pam/process/start/com.redhat:payments:4.12.0/my-process
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

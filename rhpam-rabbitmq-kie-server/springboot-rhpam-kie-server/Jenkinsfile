@@ -1,0 +1,67 @@
+ansiColor('xterm') {
+
+  def project_git_name = 'amazon-buyjourney-bpm-kie-server'
+  def service_name= 'amazon-buyjourney-service'
+  def build_environment = "amazon-cicd"
+  def deploy_environment = "amazon-pam-auth"
+  def deploy_config = "amazon-buyjourney-service"
+
+  node('maven') {
+
+    properties([[$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]]);
+
+    stage('Cheking out Source Code'){
+        git branch: 'master', changelog: false, credentialsId: 'jenkins-gitlab', poll: true, url: "https://gitlab-amazon-infrastructure.apps.openshift.telkom.co.za/process/${project_git_name}.git"
+    }
+
+    stage("Compiling & Running Unit Tests") {
+        configFileProvider([configFile(fileId: '5629e75f-35d8-459f-b7eb-df924f186a41', variable: 'NEXUS_MAVEN_SETTINGS')]) {
+            sh "mvn -s ${NEXUS_MAVEN_SETTINGS} clean test package -Pmysql"
+        }
+    }
+
+    stage ('Running JaCoCo') {
+        //sh "echo Running Jacocco Test Here - Jacocco check what current test coverage is"
+        //jacoco buildOverBuild: true, deltaBranchCoverage: '100', deltaClassCoverage: '100', deltaComplexityCoverage: '100', deltaInstructionCoverage: '100', deltaLineCoverage: '100', deltaMethodCoverage: '100', maximumBranchCoverage: '90', maximumClassCoverage: '90', maximumComplexityCoverage: '90', maximumInstructionCoverage: '90', maximumLineCoverage: '90', maximumMethodCoverage: '90', minimumBranchCoverage: '80', minimumClassCoverage: '80', minimumComplexityCoverage: '80', minimumInstructionCoverage: '80', minimumLineCoverage: '80', minimumMethodCoverage: '80'
+    }
+
+    stage("Dependency Security Check") {
+        //sh "echo Check Dependencies of application to see if linking against insecure dependencies"
+        //dependencyCheckAnalyzer datadir: '/home/jenkins/dependency-check', isFailOnErrorDisabled: true, hintsFile: '', includeCsvReports: false, includeHtmlReports: true, includeJsonReports: false, includeVulnReports: true, isAutoupdateDisabled: false, outdir: '', scanpath: '', skipOnScmChange: false, skipOnUpstreamChange: false, suppressionFile: '', zipExtensions: ''
+        //dependencyCheckPublisher canComputeNew: false, defaultEncoding: '', healthy: '90%', pattern: '', shouldDetectModules: true, unHealthy: '30%'
+        //archiveArtifacts allowEmptyArchive: true, artifacts: '**/dependency-check-report.html', onlyIfSuccessful: true
+    }
+
+   stage('Building Image') {
+               sh "echo S2I Image build happens here"
+               configFileProvider([configFile(fileId: '5629e75f-35d8-459f-b7eb-df924f186a41', variable: 'NEXUS_MAVEN_SETTINGS')]) {
+                   sh "mvn -s ${NEXUS_MAVEN_SETTINGS} fabric8:build -Dfabric8.namespace=${build_environment}"
+               }
+           }
+
+           stage('Generate & Apply DeploymentConfig') {
+               sh "echo Apply OpenShift resources"
+               configFileProvider([configFile(fileId: '5629e75f-35d8-459f-b7eb-df924f186a41', variable: 'NEXUS_MAVEN_SETTINGS')]) {
+                   sh "mvn -s ${NEXUS_MAVEN_SETTINGS} fabric8:resource fabric8:resource-apply -Dfabric8.openshift.enableAutomaticTrigger=false -Dfabric8.openshift.imageChangeTrigger=false -Dfabric8.namespace=${deploy_environment} -Dfabric8.generator.name=docker-registry.default.svc:5000/${build_environment}/${service_name}:1.0.0"
+               }
+           }
+
+
+    stage('Deploy to Openshift') {
+        sh "echo Deploy to ${deploy_environment} project"
+        sh(script: "oc rollout status dc/${deploy_config} -n ${deploy_environment} -w")
+
+
+        String isDeployed = sh(script: "oc rollout status dc/${deploy_config} -n ${deploy_environment} --watch=false", returnStdout: true)
+            if (isDeployed.contains("successfully rolled out") || isDeployed.contains("waiting on image update")) {
+                sh(script: "oc rollout latest dc/${deploy_config} -n ${deploy_environment}")
+            }
+            sh(script: "oc rollout status dc/${deploy_config} -n ${deploy_environment} -w")
+    }
+
+  }
+
+
+}
+
+
