@@ -12,7 +12,7 @@
 
 
     <properties>
-        <spring-boot-starter.version>2.1.4.RELEASE</spring-boot-starter.version>
+        <spring-boot-starter.version>2.5.12</spring-boot-starter.version>
         <rest-assured.version>3.3.0</rest-assured.version>
         <h2.version>1.4.197</h2.version>
         <mysql.version>6.0.6</mysql.version>
